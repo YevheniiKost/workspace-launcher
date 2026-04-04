@@ -8,7 +8,7 @@ namespace WorkspaceLauncher.ViewModels;
 
 public partial class SettingsViewModel : ObservableObject
 {
-    private readonly StartupService _startupService = new();
+    private readonly StartupService _startupService;
 
     public AppSettings Settings { get; }
 
@@ -24,9 +24,10 @@ public partial class SettingsViewModel : ObservableObject
     [ObservableProperty]
     private ProfileComboItem? _selectedAutoLaunchProfile;
 
-    public SettingsViewModel(AppSettings settings, List<Profile> profiles)
+    public SettingsViewModel(AppSettings settings, List<Profile> profiles, StartupService? startupService = null)
     {
         Settings = settings;
+        _startupService = startupService ?? new StartupService();
         _runOnStartup = settings.RunOnStartup;
         _startMinimized = settings.StartMinimized;
 

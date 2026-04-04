@@ -100,8 +100,7 @@ public class ProfileServiceTests : IDisposable
     public void Load_WhenFileIsCorrupted_ReturnsDefaults()
     {
         var service = CreateService();
-        File.WriteAllText(Path.Combine(_tempDir, "profiles.json"), "{ invalid json }}}");
-
+        File.WriteAllText(Path.Combine(_tempDir, "profiles.json"), "{ this is not valid json");
         var data = service.Load();
 
         Assert.NotNull(data);
