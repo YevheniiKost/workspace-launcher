@@ -11,7 +11,7 @@ namespace WorkspaceLauncher.Services;
 
 public class UpdateService
 {
-    public const string GitHubOwner = "your-username";
+    public const string GitHubOwner = "YevheniiKost";
     public const string GitHubRepo = "workspace-launcher";
     public const string ReleaseAssetName = "WorkspaceLauncher.zip";
 
