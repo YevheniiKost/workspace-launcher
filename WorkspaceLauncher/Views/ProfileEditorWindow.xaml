@@ -17,6 +17,7 @@
     <Window.Resources>
         <conv:HexColorToBrushConverter x:Key="HexColorToBrush"/>
         <conv:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+        <conv:StringEqualityConverter x:Key="StringEquality"/>
         <ObjectDataProvider x:Key="ItemTypeValues"
                             MethodName="GetValues"
                             ObjectType="{x:Type models:ItemType}">
@@ -62,8 +63,14 @@
                                 <Border.Style>
                                     <Style TargetType="Border">
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding DataContext.SelectedColor, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                         Value="{Binding .}">
+                                            <DataTrigger Value="True">
+                                                <DataTrigger.Binding>
+                                                    <MultiBinding Converter="{StaticResource StringEquality}">
+                                                        <Binding Path="DataContext.SelectedColor"
+                                                                 RelativeSource="{RelativeSource AncestorType=Window}"/>
+                                                        <Binding Path="."/>
+                                                    </MultiBinding>
+                                                </DataTrigger.Binding>
                                                 <Setter Property="BorderBrush" Value="White"/>
                                                 <Setter Property="BorderThickness" Value="2"/>
                                             </DataTrigger>
