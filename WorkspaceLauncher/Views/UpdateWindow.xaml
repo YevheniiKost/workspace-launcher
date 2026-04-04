@@ -1,0 +1,98 @@
+﻿<Window x:Class="WorkspaceLauncher.Views.UpdateWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:conv="clr-namespace:WorkspaceLauncher.Converters"
+        mc:Ignorable="d"
+        Title="Update Available"
+        Height="460" Width="560"
+        MinWidth="480" MinHeight="360"
+        Style="{StaticResource DarkWindowStyle}"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResizeWithGrip">
+
+    <Window.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+    </Window.Resources>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="🚀 Update Available"
+                       FontSize="20"
+                       FontFamily="Segoe UI Semibold"
+                       Foreground="{StaticResource TextPrimaryBrush}"/>
+            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                <TextBlock Text="Current version: "
+                           Style="{StaticResource LabelStyle}"
+                           Margin="0"/>
+                <TextBlock Text="{Binding CurrentVersionText}"
+                           Style="{StaticResource LabelStyle}"
+                           Margin="0"/>
+                <TextBlock Text="   →   "
+                           Style="{StaticResource LabelStyle}"
+                           Margin="0"/>
+                <TextBlock Text="{Binding NewVersionText}"
+                           Foreground="{StaticResource AccentBrush}"
+                           FontFamily="Segoe UI Semibold"
+                           FontSize="12"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Release Notes Label -->
+        <TextBlock Grid.Row="1"
+                   Text="What's new"
+                   Style="{StaticResource SectionHeaderStyle}"
+                   Margin="0,0,0,4"/>
+
+        <!-- Release Notes -->
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="12">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <TextBlock Text="{Binding UpdateInfo.ReleaseNotes}"
+                           Foreground="{StaticResource TextSecondaryBrush}"
+                           FontSize="13"
+                           FontFamily="Segoe UI"
+                           TextWrapping="Wrap"/>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Download Progress -->
+        <StackPanel Grid.Row="3"
+                    Margin="0,12,0,0"
+                    Visibility="{Binding IsDownloading, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Text="{Binding StatusText}"
+                       Style="{StaticResource LabelStyle}"
+                       Margin="0,0,0,6"/>
+            <ProgressBar Value="{Binding DownloadProgress}"
+                         Maximum="100"
+                         Style="{StaticResource DarkProgressBarStyle}"/>
+        </StackPanel>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="4"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,12,0,0">
+            <Button Content="Remind Me Later"
+                    Style="{StaticResource SecondaryButtonStyle}"
+                    IsEnabled="{Binding IsNotDownloading}"
+                    Click="RemindLater_Click"
+                    Margin="0,0,8,0"/>
+            <Button Content="{Binding UpdateButtonText}"
+                    Style="{StaticResource PrimaryButtonStyle}"
+                    IsEnabled="{Binding IsNotDownloading}"
+                    Click="Update_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
+

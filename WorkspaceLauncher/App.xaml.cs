@@ -1,4 +1,6 @@
 ﻿using System.Windows;
+
+using WorkspaceLauncher.Models;
 using WorkspaceLauncher.Services;
 using WorkspaceLauncher.ViewModels;
 using WorkspaceLauncher.Views;
@@ -15,6 +17,7 @@ public partial class App : Application
 
         var profileService = new ProfileService();
         var launchService = new LaunchService();
+        UpdateService updateService = new UpdateService();
         var mainVm = new MainViewModel(profileService, launchService);
 
         var mainWindow = new MainWindow(mainVm);
@@ -37,11 +40,26 @@ public partial class App : Application
         {
             mainWindow.Show();
         }
+
+        _ = CheckForUpdateInBackgroundAsync(mainWindow, updateService);
     }
 
     protected override void OnExit(ExitEventArgs e)
     {
         _trayService?.Dispose();
         base.OnExit(e);
+    }
+
+    private async Task CheckForUpdateInBackgroundAsync(Window owner, UpdateService updateService)
+    {
+        UpdateInfo? updateInfo = await updateService.CheckForUpdateAsync();
+        if (updateInfo == null)
+        {
+            return;
+        }
+
+        UpdateWindow updateWindow = new UpdateWindow(updateInfo, updateService);
+        updateWindow.Owner = owner;
+        updateWindow.ShowDialog();
     }
 }
