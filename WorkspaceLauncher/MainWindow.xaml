@@ -1,0 +1,135 @@
+<Window x:Class="WorkspaceLauncher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:WorkspaceLauncher.ViewModels"
+        xmlns:conv="clr-namespace:WorkspaceLauncher.Converters"
+        mc:Ignorable="d"
+        Title="WorkspaceLauncher"
+        Height="600" Width="900"
+        MinWidth="700" MinHeight="450"
+        Style="{StaticResource DarkWindowStyle}"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <conv:HexColorToBrushConverter x:Key="HexColorToBrush"/>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top Bar -->
+        <Border Grid.Row="0" Background="{StaticResource SurfaceBrush}" Padding="16,0">
+            <Grid>
+                <TextBlock Text="WorkspaceLauncher"
+                           FontSize="20"
+                           FontFamily="Segoe UI Semibold"
+                           Foreground="{StaticResource TextPrimaryBrush}"
+                           VerticalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center">
+                    <Button Content="&#x2699; Settings"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Command="{Binding OpenSettingsCommand}"
+                            Margin="0,0,8,0"/>
+                    <Button Content="+ New Profile"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Command="{Binding AddProfileCommand}"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Profile Cards Grid -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="16">
+            <ItemsControl ItemsSource="{Binding Profiles}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:ProfileViewModel}">
+                        <Border Style="{StaticResource CardStyle}"
+                                Width="260"
+                                Margin="8"
+                                ClipToBounds="True">
+                            <Grid>
+                                <!-- Left color accent stripe -->
+                                <Rectangle Width="6"
+                                           HorizontalAlignment="Left"
+                                           Fill="{Binding Color, Converter={StaticResource HexColorToBrush}}"
+                                           RadiusX="4" RadiusY="4"/>
+
+                                <StackPanel Margin="18,12,12,12">
+                                    <!-- Icon and Name -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                        <TextBlock Text="{Binding IconPath}"
+                                                   FontSize="22"
+                                                   Margin="0,0,10,0"
+                                                   VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Name}"
+                                                   FontSize="16"
+                                                   FontFamily="Segoe UI Semibold"
+                                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                                   VerticalAlignment="Center"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                    </StackPanel>
+
+                                    <!-- Action Buttons Row 1 -->
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="&#x25B6; Launch"
+                                                Style="{StaticResource PrimaryButtonStyle}"
+                                                Command="{Binding DataContext.LaunchProfileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding}"
+                                                Margin="0,0,6,0"/>
+                                        <Button Content="&#x23F9; End Session"
+                                                Style="{StaticResource SecondaryButtonStyle}"
+                                                Command="{Binding DataContext.CloseSessionCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding}"/>
+                                    </StackPanel>
+
+                                    <!-- Action Buttons Row 2 -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                                        <Button Content="&#x270F; Edit"
+                                                Style="{StaticResource IconButtonStyle}"
+                                                Command="{Binding DataContext.EditProfileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding}"
+                                                Margin="0,0,6,0"/>
+                                        <Button Content="&#x1F5D1; Delete"
+                                                Style="{StaticResource DangerButtonStyle}"
+                                                Command="{Binding DataContext.DeleteProfileCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Launch Progress Panel -->
+        <Border Grid.Row="2"
+                Background="{StaticResource SurfaceBrush}"
+                Padding="16,10"
+                Visibility="{Binding IsLaunching, Converter={StaticResource BoolToVisibility}}">
+            <StackPanel>
+                <TextBlock Foreground="{StaticResource TextPrimaryBrush}"
+                           FontSize="13">
+                    <Run Text="Launching: "/>
+                    <Run Text="{Binding LaunchStatus, Mode=OneWay}"/>
+                </TextBlock>
+                <ProgressBar Style="{StaticResource DarkProgressBarStyle}"
+                             IsIndeterminate="True"
+                             Margin="0,6,0,0"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
