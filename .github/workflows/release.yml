@@ -1,0 +1,75 @@
+﻿name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and Release
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Extract version from tag
+        id: version
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $version = $tag.TrimStart('v')
+          echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+          echo "TAG=$tag" >> $env:GITHUB_OUTPUT
+
+      - name: Restore
+        run: dotnet restore WorkspaceLauncher.slnx
+
+      - name: Build
+        run: >
+          dotnet build WorkspaceLauncher.slnx
+          --configuration Release
+          --no-restore
+          -p:Version=${{ steps.version.outputs.VERSION }}
+
+      - name: Test
+        run: >
+          dotnet test WorkspaceLauncher.Tests/WorkspaceLauncher.Tests.csproj
+          --configuration Release
+          --no-build
+          --verbosity normal
+
+      - name: Publish
+        run: >
+          dotnet publish WorkspaceLauncher/WorkspaceLauncher.csproj
+          --configuration Release
+          --runtime win-x64
+          --self-contained true
+          -p:PublishSingleFile=false
+          -p:Version=${{ steps.version.outputs.VERSION }}
+          --output publish/WorkspaceLauncher
+
+      - name: Zip artifact
+        shell: pwsh
+        run: |
+          Compress-Archive `
+            -Path publish/WorkspaceLauncher/* `
+            -DestinationPath publish/WorkspaceLauncher.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.TAG }}
+          name: WorkspaceLauncher ${{ steps.version.outputs.VERSION }}
+          generate_release_notes: true
+          files: publish/WorkspaceLauncher.zip
+
