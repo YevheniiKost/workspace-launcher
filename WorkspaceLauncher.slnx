@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="WorkspaceLauncher.Core/WorkspaceLauncher.Core.csproj" />
+  <Project Path="WorkspaceLauncher.Tests/WorkspaceLauncher.Tests.csproj" />
+  <Project Path="WorkspaceLauncher/WorkspaceLauncher.csproj" />
+</Solution>
