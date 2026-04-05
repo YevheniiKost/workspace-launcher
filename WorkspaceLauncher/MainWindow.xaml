@@ -7,6 +7,7 @@
         xmlns:conv="clr-namespace:WorkspaceLauncher.Converters"
         mc:Ignorable="d"
         Title="WorkspaceLauncher"
+        Icon="Resources/app.ico"
         Height="600" Width="900"
         MinWidth="700" MinHeight="450"
         Style="{StaticResource DarkWindowStyle}"

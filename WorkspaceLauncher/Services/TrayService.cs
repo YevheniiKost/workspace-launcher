@@ -1,4 +1,6 @@
 using Hardcodet.Wpf.TaskbarNotification;
+using System.Drawing;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using WorkspaceLauncher.ViewModels;
@@ -7,6 +9,8 @@ namespace WorkspaceLauncher.Services;
 
 public class TrayService : IDisposable
 {
+    private const string IconResourceUri = "pack://application:,,,/Resources/app.ico";
+
     private TaskbarIcon? _trayIcon;
     private readonly Window _mainWindow;
     private readonly MainViewModel _mainViewModel;
@@ -20,9 +24,15 @@ public class TrayService : IDisposable
 
     private void InitializeTray()
     {
+        Stream? iconStream = Application.GetResourceStream(new Uri(IconResourceUri))?.Stream;
+        Icon appIcon = iconStream != null
+            ? new Icon(iconStream)
+            : SystemIcons.Application;
+
         _trayIcon = new TaskbarIcon
         {
             ToolTipText = "WorkspaceLauncher",
+            Icon = appIcon,
             Visibility = Visibility.Visible
         };
 
