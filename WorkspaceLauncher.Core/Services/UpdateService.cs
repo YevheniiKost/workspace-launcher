@@ -18,7 +18,7 @@ public class UpdateService
     private const string GitHubApiBase = "https://api.github.com";
     private const string HttpUserAgent = "WorkspaceLauncher-UpdateChecker";
 
-    public static readonly Version CurrentVersion = new Version(1, 0, 0);
+    public static readonly Version CurrentVersion = new Version(1, 0, 1);
 
     private static readonly HttpClient s_httpClient = BuildHttpClient();
 
