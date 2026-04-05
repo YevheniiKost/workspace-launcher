@@ -57,7 +57,8 @@
 
         <!-- Release Notes -->
         <Border Grid.Row="2" Style="{StaticResource CardStyle}" Padding="12">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
                 <TextBlock Text="{Binding UpdateInfo.ReleaseNotes}"
                            Foreground="{StaticResource TextSecondaryBrush}"
                            FontSize="13"

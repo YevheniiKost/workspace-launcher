@@ -27,6 +27,8 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private ProfileViewModel? _launchingProfile;
 
+    public string AppVersionText => $"v{UpdateService.CurrentVersion}";
+
     public MainViewModel() : this(new ProfileService(), new LaunchService()) { }
 
     public MainViewModel(ProfileService profileService, LaunchService launchService)
@@ -125,12 +127,22 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void OpenSettings()
     {
+        bool originalRunOnStartup = Settings.RunOnStartup;
+        bool originalStartMinimized = Settings.StartMinimized;
+        Guid? originalAutoLaunchProfileId = Settings.AutoLaunchProfileId;
+
         var settingsVm = new SettingsViewModel(Settings, Profiles.Select(p => p.Model).ToList());
         var settingsWindow = new Views.SettingsWindow(settingsVm);
         if (settingsWindow.ShowDialog() == true)
         {
             Settings = settingsVm.Settings;
             SaveProfiles();
+        }
+        else
+        {
+            Settings.RunOnStartup = originalRunOnStartup;
+            Settings.StartMinimized = originalStartMinimized;
+            Settings.AutoLaunchProfileId = originalAutoLaunchProfileId;
         }
     }
 }

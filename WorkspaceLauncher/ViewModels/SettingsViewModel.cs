@@ -43,10 +43,17 @@ public partial class SettingsViewModel : ObservableObject
     partial void OnRunOnStartupChanged(bool value)
     {
         Settings.RunOnStartup = value;
-        _startupService.SetRunOnStartup(value);
     }
 
-    partial void OnStartMinimizedChanged(bool value) => Settings.StartMinimized = value;
+    partial void OnStartMinimizedChanged(bool value)
+    {
+        Settings.StartMinimized = value;
+    }
+
+    public void ApplyToRegistry()
+    {
+        _startupService.SetRunOnStartup(Settings.RunOnStartup);
+    }
 
     partial void OnSelectedAutoLaunchProfileChanged(ProfileComboItem? value)
     {

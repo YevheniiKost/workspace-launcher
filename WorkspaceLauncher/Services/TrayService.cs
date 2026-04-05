@@ -29,13 +29,22 @@ public class TrayService : IDisposable
         _trayIcon.TrayMouseDoubleClick += (_, _) => ShowMainWindow();
         _trayIcon.ContextMenu = BuildContextMenu();
 
-        _mainWindow.StateChanged += MainWindow_StateChanged;
+        _mainWindow.Dispatcher.BeginInvoke(
+            System.Windows.Threading.DispatcherPriority.ApplicationIdle,
+            new Action(SubscribeToWindowStateChanges));
     }
 
-    private void MainWindow_StateChanged(object? sender, EventArgs e)
+    private void SubscribeToWindowStateChanges()
+    {
+        _mainWindow.StateChanged += OnMainWindowStateChanged;
+    }
+
+    private void OnMainWindowStateChanged(object? sender, EventArgs e)
     {
         if (_mainWindow.WindowState == WindowState.Minimized)
+        {
             _mainWindow.Hide();
+        }
     }
 
     private ContextMenu BuildContextMenu()
@@ -74,7 +83,7 @@ public class TrayService : IDisposable
     {
         if (_trayIcon != null)
         {
-            _mainWindow.StateChanged -= MainWindow_StateChanged;
+            _mainWindow.StateChanged -= OnMainWindowStateChanged;
             _trayIcon.Dispose();
             _trayIcon = null;
         }

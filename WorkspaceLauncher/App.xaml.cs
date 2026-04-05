@@ -13,18 +13,19 @@ public partial class App : Application
 
     private void Application_Startup(object sender, StartupEventArgs e)
     {
-        bool startMinimized = e.Args.Contains("--minimized");
-
         var profileService = new ProfileService();
         var launchService = new LaunchService();
         UpdateService updateService = new UpdateService();
         var mainVm = new MainViewModel(profileService, launchService);
 
+        StartupService startupService = new StartupService();
+        startupService.SetRunOnStartup(mainVm.Settings.RunOnStartup);
+
         var mainWindow = new MainWindow(mainVm);
 
         _trayService = new TrayService(mainWindow, mainVm);
 
-        if (startMinimized || mainVm.Settings.StartMinimized)
+        if (mainVm.Settings.StartMinimized)
         {
             mainWindow.Show();
             mainWindow.Hide();

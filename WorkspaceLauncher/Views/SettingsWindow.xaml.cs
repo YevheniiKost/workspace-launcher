@@ -16,6 +16,7 @@ public partial class SettingsWindow : Window
 
     private void Save_Click(object sender, RoutedEventArgs e)
     {
+        _viewModel.ApplyToRegistry();
         DialogResult = true;
         Close();
     }
